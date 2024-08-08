@@ -41,8 +41,11 @@ var Chiado []byte
 //go:embed holesky.toml
 var Holesky []byte
 
+//go:embed op-sepolia.toml
+var OpSepolia []byte
+
 func getURLByChain(chain string) string {
-	return fmt.Sprintf("https://raw.githubusercontent.com/erigontech/erigon-snapshot/%s/%s.toml", branchReference, chain)
+	return fmt.Sprintf("https://raw.githubusercontent.com/rabbitprincess/erigon-snapshot/%s/%s.toml", branchReference, chain)
 }
 
 func LoadSnapshots() (couldFetch bool) {
@@ -54,6 +57,7 @@ func LoadSnapshots() (couldFetch bool) {
 		gnosisUrl     = getURLByChain("gnosis")
 		chiadoUrl     = getURLByChain("chiado")
 		holeskyUrl    = getURLByChain("holesky")
+		opSepoliaUrl  = getURLByChain("op-sepolia")
 	)
 	var hashes []byte
 	var err error
@@ -99,6 +103,12 @@ func LoadSnapshots() (couldFetch bool) {
 		return
 	}
 	Holesky = hashes
+
+	if hashes, err = fetchSnapshotHashes(opSepoliaUrl); err != nil {
+		couldFetch = false
+		return
+	}
+	OpSepolia = hashes
 
 	couldFetch = true
 	return
